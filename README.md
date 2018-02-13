@@ -11,9 +11,7 @@ The goals / steps of this project are the following:
 
 ### Reflection
 
-### 1. Describe your pipeline. As part of the description, explain how you modified the draw_lines() function.
-
-My pipeline consisted of 6 steps.
+### 1. My pipeline consisted of 6 steps.
 
 1 - Convert to grayscale
 
@@ -25,21 +23,4 @@ My pipeline consisted of 6 steps.
 
 5 - Apply Hough transform
 
-6 - Manipulate Hough lines
-
-![alt text][image1]
-
-
-### 2. Identify potential shortcomings with your current pipeline
-
-
-One potential shortcoming would be what would happen when ... 
-
-Another shortcoming could be ...
-
-
-### 3. Suggest possible improvements to your pipeline
-
-A possible improvement would be to ...
-
-Another potential improvement could be to ...
+6 - Manipulate Hough lines 
