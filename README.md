@@ -18,7 +18,7 @@ I modified
 6 - Manipulate Hough lines 
 
 
-# Pipeline implementation:
+Pipeline implementation:
 def process_image(img):
     
     #Convert image to grayscale:
@@ -49,8 +49,8 @@ def process_image(img):
 
 In order to draw a single line on the left and right lanes, I modified the draw_lines() function by first filtering left and right lines.In Next step just take avg of all points for left lines and find slope of all avg points.Now, using avg slope and top filter calculate x_cordinates for top point.similarly calculate for bottom x_cordinates. Repeat the same for right lines.
 
-2. Identify potential shortcomings with your current pipeline
+### Identify potential shortcomings with your current pipeline
 One potential shortcoming would be  when there's sharpe angle of change it'll unable to take those lines in consideration
 
-3. Suggest possible improvements to your pipeline
+### Suggest possible improvements to your pipeline
 draw_lines further can modfied for optional challenge.
