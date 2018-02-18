@@ -18,7 +18,7 @@ I modified
 6 - Manipulate Hough lines 
 
 
-#Pipeline implementation:
+# Pipeline implementation:
 def process_image(img):
     
     #Convert image to grayscale:
