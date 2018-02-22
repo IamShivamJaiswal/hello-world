@@ -53,7 +53,8 @@ signs data set:
 
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+Please refer to heading **Include an exploration visualization of the dataset** in the html output.
+A sample image from the training set is shown along with its label. 
 
 ![alt text][image1]
 
@@ -61,15 +62,15 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 
 #### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-As a first step, I decided to convert the images to normalize because it'll keep 
+I did not consider converting to grayscale because it removes information before the network even
+has a chance to play with it.
 
-Here is an example of a traffic sign image before and after grayscaling.
-
-![alt text][image2]
-
-As a last step, I normalized the image data because ...
-
-I decided to generate additional data because ... 
+I normalized the data as follows, converting to 32-bit floating point in the process:
+```python
+def normalize(image):
+    f128 = np.float32(128)
+    return (image.astype(np.float32)-f128)/f128
+```
 
 To add more data to the the data set, I used the augmentation techniques because there's imbalance distribution of image over different classes 
 
