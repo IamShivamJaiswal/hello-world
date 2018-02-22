@@ -62,9 +62,7 @@ A sample image from the training set is shown along with its label.
 
 #### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-I did not consider converting to grayscale because it removes information before the network even
-has a chance to play with it.
-
+I did not consider converting to grayscale because it removes information 
 I normalized the data as follows, converting to 32-bit floating point in the process:
 ```python
 def normalize(image):
@@ -72,13 +70,19 @@ def normalize(image):
     return (image.astype(np.float32)-f128)/f128
 ```
 
-To add more data to the the data set, I used the augmentation techniques because there's imbalance distribution of image over different classes 
+I played with generating additional data as well.  I wrote a function to take an image from the
+normalized test set, rotate it by a small amount using scipy.ndimage.interpolation.rotate(),
+and add a small amount of random noise using np.random.normal.
+I wrapped this function in a loop that appended data to the training set such that at least 1000 
+images of each label were represented.  Labels to augment, and the number of augmented images
+to add to each label, were chosen using the histogram of each label computed earlier.
+For a given label, each augmented image was added by first selected a random image from the original
+(unaugmented) data, then applying the rotation+random noise function to it.
 
-Here is an example of an original image and an augmented image:
 
-![alt text][image3]
+The total size of the original+augmented training set was precomputed, and storage preallocated,
+to avoid calling append() in an inner loop. 
 
-The difference between the original data set and the augmented data set is the following ... 
 
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
