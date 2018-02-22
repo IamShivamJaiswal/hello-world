@@ -19,14 +19,13 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+
+[image4]: ./websigns/bicyclecrossing.jpg "Bicycle Crossing"
+[image5]: ./websigns/nopassing.jpg "No Passing"
+[image6]: ./websigns/straightorright.jpg "Turn straight or right"
+[image7]: ./websigns/roadwork.jpg "Road Work"
+[image8]: ./websigns/childrencrossing.jpg "Children Crossing"
+
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -87,44 +86,90 @@ to avoid calling append() in an inner loop.
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
+My network, defined in the function `LeNet()`, has essentially .  The only differences were the following:
+
+First, I modified the first layer to accept depth-3 (color) images instead of depth-1 images.  Before:
+```python
+conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 1, 6), mean = mu, stddev = sigma))
+```
+After:
+```python
+conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 3, 6), mean = mu, stddev = sigma))
+```
+
+I also added a dropout layer after each activation (relu) layer, for example:
+```python
+conv1 = tf.nn.relu(conv1)
+conv1 = tf.nn.dropout(conv1, keep_prob)
+```
+
 My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Convolution 5x5   | 1x1 stride, valid padding, outputs 28x28x6 	|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
+| Dropout					|	 Externally tunable keep_prob					    |
+| Max pool	      	| Size 2x2, strides 2x2, valid padding, outputs 14x14x6				|
+| Convolution 5x5	    | Stride 1, valid padding.  Outputs 10x10x16   						|
+| RELU					|												|
+| Dropout					|	 Externally tunable keep_prob					    |
+| Max pool	      | Size 2x2, strides 2x2, valid padding, outputs 5x5x16				|
+| Flatten		| Input 5x5x16, output 400					|
+| Fully connected	| Input 400, output 120       |
+| RELU					|												|
+| Dropout					|	 Externally tunable keep_prob					    |
+| Fully connected	| Input 120, output 84								|
+| RELU					|												|
+| Dropout					|	 Externally tunable keep_prob					    |
+|	Fully connected	|	 Input 84, output 43 (labels)	|
+
+The output of the above layers was the logits. 
+
+To compute the loss function supplied to the optimizer, I
+took the cross entropy of softmax(logits) with the one-hot-encoded labels of the ground truth data.
+The loss was defined to be the average of the cross entropy across the batch.
  
+ The keep_prob parameter was identical for all dropout layers 
 
 
 #### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-To train the model, I used an ....
+I used an Adams optimizer with the following hyperparameters:
+```python
+EPOCHS = 40
+BATCH_SIZE = 128
+rate = 0.001
+keep_prob = .75  # keep_prob for dropout layers
+```
+
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 99.9%
+* validation set accuracy of 94.9%  
+* test set accuracy of 94.0%
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+I began with the LeNet architecture from the lab.  In our lab, LeNet proved very effective at 
+classifying black-and-white handwritten digits, so it was plausible to expect that it 
+could identify street sign images, which are of similar overall complexity.
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+I first modified LeNet to accept an input of color depth 3 and yield an output of 43 classes 
+instead of 10.  As a "zero order optimization" I tried simply dialing up the number of training
+epochs to 40 to see where the validation accuracy would plateau (or potentially peak and decline
+due to overfitting).  Unfortunately, I never observed validation set accuracy of greater than 93%,
+although the accuracy on the test set climbed to 99.9%ish.  This led me to believe that the
+network was mildly overfitting.
+
+To combat overfitting, I implemented a dropout layer after each relu activation. 
+keep_prob was added as a tunable hyperparameter.  I tried training with several values of keep_prob
+ranging from .6 to .95, and found that keep_prob = 0.75 consistently delivered around 96% validation
+accuracy.  I couldn't get it much higher than that.
+
+I also tried replacing the relu activation functions with sigmoids, but that did not appear to 
+make a significant difference. 
  
 
 ### Test a Model on New Images
@@ -133,44 +178,65 @@ If a well known architecture was chosen:
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][image4] 
 
-The first image might be difficult to classify because ...
+Bicycle crossing challenges:  Writing across sign + white bar at bottom might be interpreted as a feature
+
+![alt text][image5] 
+
+No passing challenges:  Rotated from horizontal
+
+![alt text][image6]
+
+Turn straight or right challenges:  Writing, X across sign
+
+![alt text][image7] 
+
+Road work challenges:  Picture taken from low angle
+
+![alt text][image8]
+
+Children crossing challenges:  Picture taken from low angle + writing across sign + white bar at bottom
+
+All five images were not quite square.  In resizing and interpolating them down to 32x32 squares,
+their aspect ratios are skewed.  This may also prove a challenge for the network.
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
+| Image			        |     Prediction | 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Bicycle crossing    		| Beware of ice/snow  | 
+| No passing     		| No passing        |
+| Straight or right		| Straight or right |
+| Road work	      		| Road work	    |
+| Children crossing		| Children crossing |
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%.  Both the bicycle crossing sign and the beware of snow sign
+are red and white triangles with relatively delicate internal features 
+containing crossed lines and circular patterns, so it is unsurprising that
+the network would confuse them.  Also, bicycle crossing signs were relatively 
+underrepresented in the initial (unaugmented) training set.
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The cell **Output Top 5 Softmax Probabilities For Each Image Found on the Web**
+of the jupyter notebook or html output contains my 
+code for outputting softmax probabilities for each image from the web.
+The top five softmax probabilities for each image are listed, along with bar charts.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the no passing, straight or right, and road work signs, the model is very
+(>99%) certain.  
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+For the bicycle crossing sign, the network is less certain
+(73%) of its incorrect "Beware of ice/snow" guess.  It believes 
+the sign may also be a road work sign (13.7%) or bicycle crossing sign (9.3%).
 
+For the children crossing sign, the model is only 52% certain, and believes
+the sign may be a bicycle crossing sign with 47.6% probability.  This is
+unsurprising because these two sign types are visually similar.
 
-For the second image ... 
-
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
 
 
