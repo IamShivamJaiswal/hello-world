@@ -101,7 +101,8 @@ The final model architecture (model.py lines 18-24) consisted of a convolution n
 3. **Layer 3**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4)
 4. **Layer 4**: Fully connected layer with 1024 neurons, Dropout(0.3) and ELU activation
 5. **Layer 5**: Fully connected layer with 512 neurons and ELU activation.
-'''python
+
+```py
 def get_model():
     model = Sequential()
     # model.add(Lambda(preprocess_batch, input_shape=(160, 320, 3), output_shape=(64, 64, 3)))
@@ -139,7 +140,7 @@ def get_model():
     model.compile(optimizer="adam", loss="mse")
 
     return model
-'''
+```
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
 ![alt text][image1]
