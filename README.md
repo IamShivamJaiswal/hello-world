@@ -54,7 +54,7 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 My model has 5 layers with descriptions as:
-![Model Architecture](examples/model_architecture.png)
+![Model Architecture](model_architecture.png)
 1. **Layer 1**: Conv layer with 32 5x5 filters, followed by ELU activation
 2. **Layer 2**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4) and 2x2 max pool
 3. **Layer 3**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4)
