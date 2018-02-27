@@ -141,9 +141,6 @@ def get_model():
 
     return model
 ```
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
 
 #### 3. Creation of the Training Set & Training Process
 
