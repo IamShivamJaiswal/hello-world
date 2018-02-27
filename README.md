@@ -69,7 +69,11 @@ The model was trained and validated on data sets provided by Udacity. The model 
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer , so the learning rate was not tuned manually (model.py line 139).
+Optimizer: Adam Optimizer
+No. of epochs: 3
+Images generated per epoch: 20,000 images generated on the fly
+Validation Set: 3000 images, generated on the fly
+No test set used, since the success of the model is evaluated by how well it drives on the road and not by test set lo
 
 #### 4. Appropriate training data
 
