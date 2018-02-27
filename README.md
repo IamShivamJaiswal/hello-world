@@ -53,24 +53,27 @@ The model.py file contains the code for training and saving the convolution neur
 ### Model Architecture and Training Strategy
 
 #### 1. An appropriate model architecture has been employed
-
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
-
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+My model has 5 layers with descriptions as:
+![Model Architecture](examples/model_architecture.png)
+1. **Layer 1**: Conv layer with 32 5x5 filters, followed by ELU activation
+2. **Layer 2**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4) and 2x2 max pool
+3. **Layer 3**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4)
+4. **Layer 4**: Fully connected layer with 1024 neurons, Dropout(0.3) and ELU activation
+5. **Layer 5**: Fully connected layer with 512 neurons and ELU activation
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+The model contains dropout layers in order to reduce overfitting in Layer 2(model.py lines 116), Layer 3(model.py lines 122), and Layer4(model.py lines 129). 
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on data sets provided by Udacity. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer , so the learning rate was not tuned manually (model.py line 139).
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+Training data was chosen to keep the vehicle driving on the road. I used data sets provided by Udacity for training my model for first track. For the second track I generated my own data sets by keeping car on the mid of lane.Beacuse in second track there's lot of  up and down in the roads , some sharp edge corner which is not similar to first track.
 
 For details about how I created the training data, see the next section. 
 
@@ -80,7 +83,7 @@ For details about how I created the training data, see the next section.
 
 The overall strategy for deriving a model architecture was to ...
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+My first step was to use a convolution neural network model similar to the [NVIDEA paper](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) I thought this model might be appropriate because ...
 
 In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
