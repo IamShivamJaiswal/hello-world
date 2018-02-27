@@ -150,18 +150,31 @@ These are some sample images from dataset :
 
 ![SampleImages](sample_images.png)
 
-Then I repeated this process on track two in order to get more data points.
+For track two I generated my own data sets by keeping vehicle as much as possible to centre
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+To augment the data sat, I randomly choose the camera to take the image from center, left, right
+and then randomly flipping and adding random brightness for preparing data for test and validation
 
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
+After the collection process, I had 20,000 number of images per epochs to train my model. In pre processing steps I added cropping , resizing and normalizing part.
+```py   
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+def preprocess_image(image):
+    '''
+    :param image: The input image of dimensions 160x320x3
+    :return: Output image of size 64x64x3
+    '''
+    cropped_image = image[55:135, :, :]
+    processed_image = cv2.resize(cropped_image)
+    image = processed_image.astype(np.float32)
+	
+    #Normalize image
+    image = image/255.0 - 0.5
+    return image
+
+```
+
+
+I finally  divide  the data set and put 20% of the data into a validation set. 
+
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 3 as evidenced by experiment as it overfitting the model. I used an adam optimizer so that manually training the learning rate wasn't necessary.
