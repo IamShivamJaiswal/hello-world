@@ -77,8 +77,6 @@ Images generated per epoch: 20,000 images generated on the fly
 
 Validation Set: 3000 images, generated on the fly
 
-No test set used, since the success of the model is evaluated by how well it drives on the road and not by test set lo
-
 #### 4. Appropriate training data
 
 Training data was chosen to keep the vehicle driving on the road. I used data sets provided by Udacity for training my model for first track. For the second track I generated my own data sets by keeping car on the mid of lane.Beacuse in second track there's lot of  up and down in the roads , some sharp edge corner which is not similar to first track.
@@ -89,24 +87,59 @@ For details about how I created the training data, see the next section.
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
 
-My first step was to use a convolution neural network model similar to the [NVIDEA paper](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) I thought this model might be appropriate because ...
-
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+My first step was to use a convolution neural network model similar to the [NVIDEA paper](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) I thought this model might be appropriate because it was one of the fine architecture for traininig neural network.So I started with 3 Conv layer and 2 fully connected layer.I used augmentation technque [this blog post](https://chatbotslife.com/using-augmentation-to-mimic-human-driving-496b569760a9#.d779iwp28) from this post. In the augmentation, I choose randomly the camera to take the image from center, left, right
+and then randomly flipping and adding random brightness for preparing data for test and validation.
+I choose 3 epochs , 20,000 image per epoch to train my model based on above architecure.
+After this , vehicle is able to drive autonomously around the track without leaving the road.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes 
+1. **Layer 1**: Conv layer with 32 5x5 filters, followed by ELU activation
+2. **Layer 2**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4) and 2x2 max pool
+3. **Layer 3**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4)
+4. **Layer 4**: Fully connected layer with 1024 neurons, Dropout(0.3) and ELU activation
+5. **Layer 5**: Fully connected layer with 512 neurons and ELU activation.
+'''python
+def get_model():
+    model = Sequential()
+    # model.add(Lambda(preprocess_batch, input_shape=(160, 320, 3), output_shape=(64, 64, 3)))
 
+    # layer 1 output shape is 32x32x32
+    model.add(Convolution2D(32, 5, 5, input_shape=(64, 64, 3), subsample=(2, 2), border_mode="same"))
+    model.add(ELU())
+
+    # layer 2 output shape is 15x15x16
+    model.add(Convolution2D(16, 3, 3, subsample=(1, 1), border_mode="valid"))
+    model.add(ELU())
+    model.add(Dropout(.4))
+    model.add(MaxPooling2D((2, 2), border_mode='valid'))
+
+    # layer 3 output shape is 12x12x16
+    model.add(Convolution2D(16, 3, 3, subsample=(1, 1), border_mode="valid"))
+    model.add(ELU())
+    model.add(Dropout(.4))
+
+    # Flatten the output
+    model.add(Flatten())
+
+    # layer 4
+    model.add(Dense(1024))
+    model.add(Dropout(.3))
+    model.add(ELU())
+
+    # layer 5
+    model.add(Dense(512))
+    model.add(ELU())
+
+    # Finally a single output, since this is a regression problem
+    model.add(Dense(1))
+
+    model.compile(optimizer="adam", loss="mse")
+
+    return model
+'''
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
 ![alt text][image1]
