@@ -93,7 +93,7 @@ For details about how I created the training data, see the next section.
 
 
 My first step was to use a convolution neural network model similar to the [NVIDEA paper](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) I thought this model might be appropriate because it was one of the dense architecture for traininig neural network.So I started with 5 Conv layer and 5 fully connected layer.In the augmentation, I choose randomly  image from center, left, right
-and then randomly flipping.I choose 3 epochs , and (3*8437)20,000 image per epoch to train my model based on above architecure.
+and then randomly flipping.I choose 3 epochs , and (8036*3)*0.8=19286 image per epoch to train my model based on above architecure.
 After this , vehicle is able to drive autonomously around the track. I choose 3 times data set to make my model more stable 
 #### 2. Final Model Architecture
 
