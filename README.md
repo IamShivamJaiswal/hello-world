@@ -178,14 +178,14 @@ and then randomly flipping  image for test and validation
 After the collection process, I had (8036*3)*0.8=19286 number of images per epochs to train my model. In pre processing steps I added  normalizing,cropping of image from(160x320) to (65x320).
 ```py   
 for batch_sample in batch_samples:
-	clr = np.random.choice(3)
+    clr = np.random.choice(3)
 	name = './data/IMG/'+batch_sample[clr].split('/')[-1]
 	clr_image = cv2.imread(name)
 	clr_angle = float(batch_sample[3])
 	if clr==1:
-		   clr_angle+=0.2
+		clr_angle+=0.2
 	elif clr==2:
-		   clr_angle-=0.2
+		clr_angle-=0.2
 	rf = np.random.choice(2)
 	if rf==1:
 		clr_image = cv2.flip(clr_image,1)
