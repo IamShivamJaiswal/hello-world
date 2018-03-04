@@ -35,7 +35,7 @@ The goals / steps of this project are the following:
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py containing the script to create and train the model
+* model1.py containing the script to create and train the model
 * drive.py for driving the car in autonomous mode
 * model.h5 containing a trained convolution neural network 
 * writeup_report.md or writeup_report.pdf summarizing the results
@@ -53,17 +53,21 @@ The model.py file contains the code for training and saving the convolution neur
 ### Model Architecture and Training Strategy
 
 #### 1. An appropriate model architecture has been employed
-My model has 5 layers with descriptions as:
-![Model Architecture](model_architecture.png)
-1. **Layer 1**: Conv layer with 32 5x5 filters, followed by ELU activation
-2. **Layer 2**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4) and 2x2 max pool
-3. **Layer 3**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4)
-4. **Layer 4**: Fully connected layer with 1024 neurons, Dropout(0.3) and ELU activation
-5. **Layer 5**: Fully connected layer with 512 neurons and ELU activation
+My model has 10 layers with descriptions as:
+1. **Layer 1**: Conv layer with 24 5x5 filters, followed by RELU activation,
+2. **Layer 2**: Conv layer with 36 5x5 filters, RELU activation
+3. **Layer 3**: Conv layer with 48 5x5 filters, RELU activation, Dropout(0.4)
+4. **Layer 4**: Conv layer with 64 3x3 filters, RELU activation
+5. **Layer 5**: Conv layer with 64 3x3 filters, RELU activation, Dropout(0.4)
+6. **Layer 6**: Fully connected layer with 1024 neurons, Dropout(0.3) and RELU activation
+7. **Layer 7**: Fully connected layer with 512 neurons,
+8. **Layer 8**: Fully connected layer with 128 neurons,
+9. **Layer 9**: Fully connected layer with 64 neurons,
+10. **Layer 10**: Fully connected layer with 1 neurons, 
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting in Layer 2(model.py lines 116), Layer 3(model.py lines 122), and Layer4(model.py lines 129). 
+The model contains dropout layers in order to reduce overfitting in Layer 3(model.py lines 92), Layer 5(model.py lines 95), and Layer 6(model.py lines 98). 
 
 The model was trained and validated on data sets provided by Udacity. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
@@ -73,13 +77,13 @@ Optimizer: Adam Optimizer
 
 No. of epochs: 3
 
-Images generated per epoch: 20,000 images generated on the fly
+Images generated per epoch: 19286 images 
 
-Validation Set: 3000 images, generated on the fly
+Validation Set: 4825 images
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used data sets provided by Udacity for training my model for first track. For the second track I generated my own data sets by keeping car on the mid of lane.Beacuse in second track there's lot of  up and down in the roads , some sharp edge corner which is not similar to first track.
+Training data was chosen to keep the vehicle driving on the road. I used data sets(x3 i.e. 3 times of data by multiplying arrayx3) provided by Udacity for training my model for first track.
 
 For details about how I created the training data, see the next section. 
 
@@ -88,58 +92,71 @@ For details about how I created the training data, see the next section.
 #### 1. Solution Design Approach
 
 
-My first step was to use a convolution neural network model similar to the [NVIDEA paper](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) I thought this model might be appropriate because it was one of the fine architecture for traininig neural network.So I started with 3 Conv layer and 2 fully connected layer.I used augmentation technque [this blog post](https://chatbotslife.com/using-augmentation-to-mimic-human-driving-496b569760a9#.d779iwp28) from this post. In the augmentation, I choose randomly the camera to take the image from center, left, right
-and then randomly flipping and adding random brightness for preparing data for test and validation.
-I choose 3 epochs , 20,000 image per epoch to train my model based on above architecure.
-After this , vehicle is able to drive autonomously around the track without leaving the road.
-
+My first step was to use a convolution neural network model similar to the [NVIDEA paper](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) I thought this model might be appropriate because it was one of the dense architecture for traininig neural network.So I started with 5 Conv layer and 5 fully connected layer.In the augmentation, I choose randomly  image from center, left, right
+and then randomly flipping.I choose 3 epochs , and (3*8437)20,000 image per epoch to train my model based on above architecure.
+After this , vehicle is able to drive autonomously around the track. I choose 3 times data set to make my model more stable 
 #### 2. Final Model Architecture
 
 The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes 
-1. **Layer 1**: Conv layer with 32 5x5 filters, followed by ELU activation
-2. **Layer 2**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4) and 2x2 max pool
-3. **Layer 3**: Conv layer with 16 3x3 filters, ELU activation, Dropout(0.4)
-4. **Layer 4**: Fully connected layer with 1024 neurons, Dropout(0.3) and ELU activation
-5. **Layer 5**: Fully connected layer with 512 neurons and ELU activation.
+Layer (type)                     Output Shape          Param #     Connected to                     
+====================================================================================================
+lambda_3 (Lambda)                (None, 160, 320, 3)   0           lambda_input_3[0][0]             
+____________________________________________________________________________________________________
+cropping2d_3 (Cropping2D)        (None, 65, 320, 3)    0           lambda_3[0][0]                   
+____________________________________________________________________________________________________
+convolution2d_11 (Convolution2D) (None, 31, 158, 24)   1824        cropping2d_3[0][0]               
+____________________________________________________________________________________________________
+convolution2d_12 (Convolution2D) (None, 14, 77, 36)    21636       convolution2d_11[0][0]           
+____________________________________________________________________________________________________
+convolution2d_13 (Convolution2D) (None, 5, 37, 48)     43248       convolution2d_12[0][0]           
+____________________________________________________________________________________________________
+dropout_7 (Dropout)              (None, 5, 37, 48)     0           convolution2d_13[0][0]           
+____________________________________________________________________________________________________
+convolution2d_14 (Convolution2D) (None, 3, 35, 64)     27712       dropout_7[0][0]                  
+____________________________________________________________________________________________________
+convolution2d_15 (Convolution2D) (None, 1, 33, 64)     36928       convolution2d_14[0][0]           
+____________________________________________________________________________________________________
+dropout_8 (Dropout)              (None, 1, 33, 64)     0           convolution2d_15[0][0]           
+____________________________________________________________________________________________________
+flatten_3 (Flatten)              (None, 2112)          0           dropout_8[0][0]                  
+____________________________________________________________________________________________________
+dense_11 (Dense)                 (None, 1024)          2163712     flatten_3[0][0]                  
+____________________________________________________________________________________________________
+dropout_9 (Dropout)              (None, 1024)          0           dense_11[0][0]                   
+____________________________________________________________________________________________________
+activation_3 (Activation)        (None, 1024)          0           dropout_9[0][0]                  
+____________________________________________________________________________________________________
+dense_12 (Dense)                 (None, 512)           524800      activation_3[0][0]               
+____________________________________________________________________________________________________
+dense_13 (Dense)                 (None, 128)           65664       dense_12[0][0]                   
+____________________________________________________________________________________________________
+dense_14 (Dense)                 (None, 64)            8256        dense_13[0][0]                   
+____________________________________________________________________________________________________
+dense_15 (Dense)                 (None, 1)             65          dense_14[0][0]                   
+====================================================================================================
+Total params: 2,893,845
+Trainable params: 2,893,845
+Non-trainable params: 0
 
 ```py
-def get_model():
-    model = Sequential()
-    # model.add(Lambda(preprocess_batch, input_shape=(160, 320, 3), output_shape=(64, 64, 3)))
-
-    # layer 1 output shape is 32x32x32
-    model.add(Convolution2D(32, 5, 5, input_shape=(64, 64, 3), subsample=(2, 2), border_mode="same"))
-    model.add(ELU())
-
-    # layer 2 output shape is 15x15x16
-    model.add(Convolution2D(16, 3, 3, subsample=(1, 1), border_mode="valid"))
-    model.add(ELU())
-    model.add(Dropout(.4))
-    model.add(MaxPooling2D((2, 2), border_mode='valid'))
-
-    # layer 3 output shape is 12x12x16
-    model.add(Convolution2D(16, 3, 3, subsample=(1, 1), border_mode="valid"))
-    model.add(ELU())
-    model.add(Dropout(.4))
-
-    # Flatten the output
-    model.add(Flatten())
-
-    # layer 4
-    model.add(Dense(1024))
-    model.add(Dropout(.3))
-    model.add(ELU())
-
-    # layer 5
-    model.add(Dense(512))
-    model.add(ELU())
-
-    # Finally a single output, since this is a regression problem
-    model.add(Dense(1))
-
-    model.compile(optimizer="adam", loss="mse")
-
-    return model
+model = Sequential()
+model.add(Lambda(lambda x:(x/255.0)-0.5,input_shape=(160,320,3)))
+model.add(Cropping2D(cropping=((70,25), (0,0))))
+model.add(Convolution2D(24,5,5, subsample=(2,2), activation='relu'))
+model.add(Convolution2D(36,5,5, subsample=(2,2), activation='relu'))
+model.add(Convolution2D(48,5,5, subsample=(2,2), activation='relu'))
+model.add(Dropout(.4))
+model.add(Convolution2D(64,3,3, activation='relu'))
+model.add(Convolution2D(64,3,3, activation='relu'))
+model.add(Dropout(.4))
+model.add(Flatten())
+model.add(Dense(1024))
+model.add(Dropout(0.3))
+model.add(Activation('relu'))
+model.add(Dense(512))
+model.add(Dense(128))
+model.add(Dense(64))
+model.add(Dense(1))
 ```
 
 #### 3. Creation of the Training Set & Training Process
@@ -150,28 +167,31 @@ These are some sample images from dataset :
 
 ![SampleImages](sample_images.png)
 
-For track two I generated my own data sets by keeping vehicle as much as possible to centre
 
-To augment the data sat, I randomly choose the camera to take the image from center, left, right
-and then randomly flipping and adding random brightness for preparing data for test and validation
+To augment the data sat, I randomly choose the  image from center, left, right
+and then randomly flipping  image for test and validation
 
 
-After the collection process, I had 20,000 number of images per epochs to train my model. In pre processing steps I added cropping , resizing and normalizing part.
+After the collection process, I had (8036*3)*0.8=19286 number of images per epochs to train my model. In pre processing steps I added  normalizing,cropping of image from(160x320) to (65x320).
 ```py   
-
-def preprocess_image(image):
-    '''
-    :param image: The input image of dimensions 160x320x3
-    :return: Output image of size 64x64x3
-    '''
-    cropped_image = image[55:135, :, :]
-    processed_image = cv2.resize(cropped_image)
-    image = processed_image.astype(np.float32)
-	
-    #Normalize image
-    image = image/255.0 - 0.5
-    return image
-
+for batch_sample in batch_samples:
+	clr = np.random.choice(3)
+	name = './data/IMG/'+batch_sample[clr].split('/')[-1]
+	clr_image = cv2.imread(name)
+	clr_angle = float(batch_sample[3])
+	if clr==1:
+		   clr_angle+=0.2
+	elif clr==2:
+		   clr_angle-=0.2
+	rf = np.random.choice(2)
+	if rf==1:
+		clr_image = cv2.flip(clr_image,1)
+		#print(clr_angle)
+		if clr_angle != 0:
+			clr_angle = float(clr_angle)*-1.0
+		#print(clr_angle)
+	images.append(clr_image)
+	angles.append(clr_angle)
 ```
 
 
